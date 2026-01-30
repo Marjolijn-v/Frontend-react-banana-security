@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import {AuthContext} from "../context/AuthContext";
 
 function Home() {
-  const { login } = useContext(AuthContext);
+
 
     return (
     <>
-        {console.log(login)}
+
       <h1>Homepagina</h1>
       <section>
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem id libero provident! Accusantium at autem

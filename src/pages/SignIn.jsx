@@ -1,6 +1,7 @@
 import React, {useContext, useState} from 'react';
 import { Link } from 'react-router-dom';
 import {AuthContext} from "../context/AuthContext";
+import axios from "axios";
 
 function SignIn() {
     const { login } = useContext(AuthContext);
@@ -9,10 +10,23 @@ function SignIn() {
         password:'',
     });
 
-    function handleSubmit (e) {
+    async function handleSubmit (e) {
         e.preventDefault();
-        login();
         console.log(formState);
+        try {
+            const response = await axios.post('https://novi-backend-api-wgsgz.ondigitalocean.app/api/login', {
+                email: formState.email,
+                password: formState.password,
+            }, {
+                headers: {
+                    'novi-education-project-id': '2767c1c3-13ff-45b7-a2b7-6870077651b3'
+                }
+            });
+            // console.log(response);
+            login(response.data);
+        } catch(e) {
+            console.error(e);
+        }
     }
 
     function handleChange(e) {
