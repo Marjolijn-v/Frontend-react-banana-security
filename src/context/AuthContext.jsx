@@ -11,7 +11,10 @@ function AuthContextProvider( {children} ) {
         isAuth: false,
         user:null,
         status: 'pending',
-    });
+    })
+
+
+
 
     useEffect(() => {
         //persist on refresh
@@ -19,14 +22,7 @@ function AuthContextProvider( {children} ) {
         if (jwtToken) {
             const decoded = jwtDecode(jwtToken);
             if(isTokenValid(decoded)) {
-                toggleAuth({
-                    isAuth: true,
-                    user: {
-                        email: decoded.email,
-                        roles: decoded.role,
-                    },
-                    status: 'done',
-                });
+                checkAuth();
             } else {
                 toggleAuth( {
                     ...auth,
@@ -41,9 +37,37 @@ function AuthContextProvider( {children} ) {
             });
         }
     }, []);
+
+    async function checkAuth() {
+        const jwtToken = localStorage.getItem('token');
+        const decoded = jwtDecode(jwtToken);
+        const userId = decoded.userId;
+
+        try {
+
+            const response = await axios.get(`https://novi-backend-api-wgsgz.ondigitalocean.app/api/users/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`,
+                    'novi-education-project-id': '2767c1c3-13ff-45b7-a2b7-6870077651b3',
+                    "Content-Type": "application/json",
+                },
+            }
+            );
+
+            toggleAuth({
+                isAuth: true,
+                user: response.data,
+                status: 'done',
+            })
+
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+
     const navigate = useNavigate();
-
-
 
     function login(userDetails) {
         localStorage.setItem('token', userDetails.token);
